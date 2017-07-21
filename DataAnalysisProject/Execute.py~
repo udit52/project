@@ -1,0 +1,81 @@
+from StatisticAnalyser import StatisticAnalyser
+from Graph import Graph
+from Validator import Validator
+
+print ""
+print "----------------------------------------DAV----------------------------------------"
+print ""
+dataFile=raw_input("Enter the file name to be executed :")
+s=StatisticAnalyser(dataFile,4)
+s.Read()
+s.CheckContinous()
+s.ContinousTable()
+s.DiscreteTable()
+print ""
+print "--------------------CREATE GRAPH--------------------"
+print ""
+obj=Validator(dataFile)  
+df=obj.getDataFrame()
+continousCol=s.getContinous()
+selectMoreGraph="yes"
+while(selectMoreGraph == "yes"):
+	print("")
+	print("Enter the type of graph to be drawn from the following list : bar line scatter area box hexbin pie hist")
+	graph_type=raw_input()
+	print continousCol
+	target=None
+	if graph_type=="scatter":
+		print("")
+		target=raw_input("Enter the target")
+	field_list=[]
+	selectContinue="yes"
+	isMultipleSelectionGraphType= False
+	if((graph_type == "line") or (graph_type == "bar") or (graph_type == "area") or (graph_type == "scatter") or (graph_type == "box") or (graph_type == "hist")):
+		isMultipleSelectionGraphType = True
+	continueAddingField = True
+	while((selectContinue == "yes") and (continueAddingField == True)):
+		print("")
+		field_list.append(raw_input("Enter the field for the graph (y-axis):"))
+		if(isMultipleSelectionGraphType):
+			print("")
+			selectContinue = raw_input("Do you want to add more fields?:")
+			continueAddingField=True
+		else:
+			continueAddingField = False
+	if(set(field_list).issubset(continousCol)):
+		dates=None
+		isDateTimeSelected="yes"
+		if((graph_type !="scatter") and (graph_type !="pie") and (graph_type != "hexbin") and (graph_type != "box")):
+			print("")
+			isDateTimeSelected=raw_input("Do you want to plot Date-Time on x-axis")
+			if(isDateTimeSelected == "yes"):
+				print("")
+				dates=raw_input("Enter the name of date-time type field:")
+		ymin=None
+		ymax=None
+		xmin=None
+		xmax=None
+		flag="no"
+		print("")
+		flag=raw_input("Do you want to edit x-axis or y-axis:")
+		if(flag=="yes"):
+			print("")
+			xmin=int(raw_input("minimum value of x:")) 
+			xmax=int(raw_input("maximum value of x:")) 
+			ymin=int(raw_input("minimum value of y:")) 
+			ymax=int(raw_input("maximum value of y:")) 
+		percent=100
+		sampleData="yes"
+		if(graph_type != "box"):
+			print("")
+			sampleData==raw_input("Do you want to perform sampling of data :")
+			if(sampleData=="yes"):
+				print("")
+				percent=int(raw_input("Enter the percent:"))
+		graph=Graph(dataFile,field_list,isDateTimeSelected,xmin,xmax,ymin,ymax,dates,percent,target)
+		graph.selectGraph(graph_type)
+	else:
+		print("")
+		print"Incorrect Field Type"
+	print ""
+	selectMoreGraph=raw_input("Do you want to plot more graph :")

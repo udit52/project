@@ -1,0 +1,16 @@
+import pandas as pd
+class Validator:
+
+	def __init__(self,dataFile):
+		self.dataFile=dataFile
+		self.df=pd.read_csv(dataFile)
+
+	def check(self):
+		if(dataFile.endswith(".csv")):
+			print("File Format Correct")
+		else:
+			print("File Format Incorrect")
+			sys.exit()
+			
+	def getDataFrame(self):
+		return self.df		
